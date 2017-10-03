@@ -29,4 +29,13 @@
         android:onClick="doStartQuiz"
         android:text="Start Quiz" />
 
+    <Button
+        android:id="@+id/delicious_yammy_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:onClick="doStartQuiz"
+        android:text="Obtain Yams" />
+
 </LinearLayout>
