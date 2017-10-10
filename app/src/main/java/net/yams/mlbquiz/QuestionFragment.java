@@ -11,35 +11,21 @@ import android.widget.TextView;
 
 public class QuestionFragment extends Fragment
 {
-    /// y java no have structs and uniform init
-    public static final class QuestionData
-    {
-        private QuestionData(String heading, String body, String[] answers)
-        { this.heading = heading; this.body = body; this.answers = answers; }
+    private static final String ARG_INDEX = "index";
+    private static final String ARG_QUESTION = "question";
+    private static final String ARG_ANSWERS = "answers";
 
-        String heading; String body; String[] answers;
-    }
-
-    public static final QuestionData[] QUIZ_DATA =
-    {
-        new QuestionData ( "Question One", "This is the first question.",
-            new String[] { "it", "has", "four", "answers" } ),
-        new QuestionData ( "Question Two", "This is the second question.",
-            new String[] { "this", "one", "has", "five", "answers" } ),
-        new QuestionData ( "Question Three", "This is the third question.",
-            new String[] { "this", "one", "blag", "has", "six", "answers" } ),
-    };
-
-    /// The argument name for the question number of this fragment.
-    private static final String ARG_QUESTION_NUMBER = "question_number";
-
-    /// Construct a new fragment for the given question number.
-    public static QuestionFragment newInstance(int questionNumber)
+    /// Construct a new fragment for the given quiz and question indices.
+    public static QuestionFragment newInstance(int index, String question, String[] answers)
     {
         QuestionFragment fragment = new QuestionFragment();
+
         Bundle args = new Bundle();
-        args.putInt(ARG_QUESTION_NUMBER, questionNumber);
+        args.putInt(ARG_INDEX, index);
+        args.putString(ARG_QUESTION, question);
+        args.putStringArray(ARG_ANSWERS, answers);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -52,16 +38,18 @@ public class QuestionFragment extends Fragment
         TextView body = (TextView) rootView.findViewById(R.id.question_body);
         RadioGroup group = (RadioGroup) rootView.findViewById(R.id.question_group);
 
-        QuestionData data = QUIZ_DATA[getArguments().getInt(ARG_QUESTION_NUMBER)];
+        int index = getArguments().getInt(ARG_INDEX);
+        String question = getArguments().getString(ARG_QUESTION);
+        String[] answers = getArguments().getStringArray(ARG_ANSWERS);
 
-        heading.setText(data.heading);
-        body.setText(data.body);
+        heading.setText(question);
+        body.setText(question);
 
-        for (int index = 0; index < data.answers.length; ++index)
+        for (int i = 0; i < answers.length; ++i)
         {
             RadioButton button = new RadioButton(getActivity());
-            button.setId(index);
-            button.setText(data.answers[index]);
+            button.setId(i);
+            button.setText(answers[i]);
             group.addView(button);
         }
 

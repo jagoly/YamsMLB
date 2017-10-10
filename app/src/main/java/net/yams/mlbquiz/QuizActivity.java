@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 public class QuizActivity extends AppCompatActivity
 {
+    private DatabaseHelper mDatabaseHelper;
 
     private QuestionPagerAdapter mQuestionPagerAdapter;
 
@@ -18,7 +19,9 @@ public class QuizActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        mQuestionPagerAdapter = new QuestionPagerAdapter(getSupportFragmentManager());
+        mDatabaseHelper = new DatabaseHelper(this);
+
+        mQuestionPagerAdapter = new QuestionPagerAdapter(getSupportFragmentManager(), mDatabaseHelper, 0);
 
         mViewPager = (ViewPager) findViewById(R.id.quiz_pager);
         mViewPager.setAdapter(mQuestionPagerAdapter);
