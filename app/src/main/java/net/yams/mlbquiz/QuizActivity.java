@@ -7,10 +7,10 @@ import android.os.Bundle;
 
 public class QuizActivity extends AppCompatActivity
 {
+    public static final String ARG_INDEX = "index";
+
     private DatabaseHelper mDatabaseHelper;
-
     private QuestionPagerAdapter mQuestionPagerAdapter;
-
     private ViewPager mViewPager;
 
     @Override
@@ -21,7 +21,9 @@ public class QuizActivity extends AppCompatActivity
 
         mDatabaseHelper = new DatabaseHelper(this);
 
-        mQuestionPagerAdapter = new QuestionPagerAdapter(getSupportFragmentManager(), mDatabaseHelper, 0);
+        int index = getIntent().getExtras().getInt(ARG_INDEX);
+
+        mQuestionPagerAdapter = new QuestionPagerAdapter(getSupportFragmentManager(), mDatabaseHelper, index);
 
         mViewPager = (ViewPager) findViewById(R.id.quiz_pager);
         mViewPager.setAdapter(mQuestionPagerAdapter);

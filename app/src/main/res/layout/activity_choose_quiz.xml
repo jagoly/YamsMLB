@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context="net.yams.mlbquiz.MainActivity">
+    tools:context="net.yams.mlbquiz.ChooseQuizActivity">
 
     <Toolbar
         android:id="@+id/main_toolbar"
@@ -21,21 +21,35 @@
         android:title="MyLifeBalance App" />
 
     <Button
-        android:id="@+id/main_button_quiz"
+        android:id="@+id/main_button_quiz_a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:onClick="doStartQuiz"
-        android:text="Start Quiz" />
+        android:onClick="doStartQuizA" />
 
     <Button
-        android:id="@+id/delicious_yammy_button"
+        android:id="@+id/main_button_quiz_b"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:onClick="doStartQuiz"
-        android:text="Obtain Yams" />
+        android:onClick="doStartQuizB" />
+
+    <Button
+        android:id="@+id/main_button_quiz_c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:onClick="doStartQuizC" />
+
+    <Button
+        android:id="@+id/main_button_quiz_d"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:onClick="doStartQuizD" />
 
 </LinearLayout>
