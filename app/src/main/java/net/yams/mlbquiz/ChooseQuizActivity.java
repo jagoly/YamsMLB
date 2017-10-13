@@ -1,17 +1,24 @@
 package net.yams.mlbquiz;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.content.Intent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ResourceCursorAdapter;
+import android.widget.TextView;
 
-public class ChooseQuizActivity extends AppCompatActivity
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+
+public class ChooseQuizActivity extends Activity
 {
-    private DatabaseHelper mDatabaseHelper;
+    private SQLiteAssetHelper mDatabaseHelper;
+
+    //============================================================================//
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -19,53 +26,57 @@ public class ChooseQuizActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_quiz);
 
-        mDatabaseHelper = new DatabaseHelper(this);
-
-        String query = "SELECT QuizName, Image FROM Quizes";
+        mDatabaseHelper = new SQLiteAssetHelper(this, "mlb.db", null, 1);
         SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
 
-        Button btnA = (Button) findViewById(R.id.main_button_quiz_a);
-        Button btnB = (Button) findViewById(R.id.main_button_quiz_b);
-        Button btnC = (Button) findViewById(R.id.main_button_quiz_c);
-        Button btnD = (Button) findViewById(R.id.main_button_quiz_d);
+        final String query = "SELECT QuizIndex as _id, QuizName, Image FROM Quizes";
+        final Cursor cursor = db.rawQuery(query, null);
 
-        cursor.moveToNext(); btnA.setText(cursor.getString(0));
-        cursor.moveToNext(); btnB.setText(cursor.getString(0));
-        cursor.moveToNext(); btnC.setText(cursor.getString(0));
-        cursor.moveToNext(); btnD.setText(cursor.getString(0));
+        ResourceCursorAdapter adapter = new ResourceCursorAdapter(this, R.layout.view_choose_quiz_choice, cursor, 0)
+        {
+            @Override
+            public void bindView(View view, Context context, Cursor cursor)
+            {
+                final int quizIndex = cursor.getInt(0);
+
+                TextView nameView = (TextView) view.findViewById(R.id.choose_quiz_choice_name);
+                nameView.setText(cursor.getString(1));
+
+                ImageView imageView = (ImageView) view.findViewById(R.id.choose_quiz_choice_image);
+                String imagePath = "quiz_" + cursor.getString(2);
+                int imageID = getResources().getIdentifier(imagePath, "drawable", getPackageName());
+                imageView.setImageResource(imageID);
+
+                // java 8 has lambdas, but then we'd need to use android studio 3.0
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View view) { startQuizActivity(quizIndex); }
+                });
+            }
+        };
+
+        ListView listView = (ListView) findViewById(R.id.choose_quiz_list);
+        listView.setAdapter(adapter);
     }
 
-    // todo: this rubbish should use a recycler view or something
+    //============================================================================//
 
-    public void doStartQuizA(View view)
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        mDatabaseHelper.close();
+    }
+
+    //============================================================================//
+
+    private void startQuizActivity(int quizIndex)
     {
         Intent intent = new Intent(this, QuizActivity.class);
-        intent.putExtra(QuizActivity.ARG_INDEX, 0);
+        intent.putExtra(QuizActivity.ARG_INDEX, quizIndex);
         startActivityForResult(intent, 1);
     }
 
-    public void doStartQuizB(View view)
-    {
-        Intent intent = new Intent(this, QuizActivity.class);
-        intent.putExtra(QuizActivity.ARG_INDEX, 1);
-        startActivityForResult(intent, 1);
-    }
-
-    public void doStartQuizC(View view)
-    {
-        Intent intent = new Intent(this, QuizActivity.class);
-        intent.putExtra(QuizActivity.ARG_INDEX, 2);
-        startActivityForResult(intent, 1);
-    }
-    public void doStartQuizD(View view)
-    {
-        Intent intent = new Intent(this, QuizActivity.class);
-        intent.putExtra(QuizActivity.ARG_INDEX, 3);
-        startActivityForResult(intent, 1);
-    }
-
-    private void handleQuizResult(int[] results)
+    private void handleQuizResult(int[] choices)
     {
 
     }
@@ -77,7 +88,7 @@ public class ChooseQuizActivity extends AppCompatActivity
         {
             if (resultCode == Activity.RESULT_OK)
             {
-                this.handleQuizResult(data.getIntArrayExtra("results"));
+                this.handleQuizResult(data.getIntArrayExtra("choices"));
             }
             else if (resultCode == Activity.RESULT_CANCELED)
             {

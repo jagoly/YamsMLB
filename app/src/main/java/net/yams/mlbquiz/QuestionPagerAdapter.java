@@ -1,63 +1,94 @@
 package net.yams.mlbquiz;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import java.util.ArrayList;
+import android.support.v13.app.FragmentPagerAdapter;
 
 /// FragmentPagerAdapter that returns a fragment corresponding to one of the questions.
 public class QuestionPagerAdapter extends FragmentPagerAdapter
 {
-    private DatabaseHelper mDatabaseHelper;
+    private Fragment[] mFragments;
 
-    public QuestionPagerAdapter(FragmentManager fm, DatabaseHelper databaseHelper, int quizIndex)
+    //============================================================================//
+
+    public QuestionPagerAdapter(FragmentManager fm, SQLiteDatabase db, int quizIndex)
     {
         super(fm);
 
-        mDatabaseHelper = databaseHelper;
-        mQuizIndex = quizIndex;
+        String query; Cursor cursor;
 
-        String query = "select AnswerText from Answers";
-        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        //--------------------------------------------------------//
 
-        ArrayList<String> answers = new ArrayList<>();
-        while (cursor.moveToNext()) answers.add(cursor.getString(0));
+        query = "SELECT AnswerText FROM Answers";
+        cursor = db.rawQuery(query, null);
 
-        mAnswers = new String[answers.size()];
-        answers.toArray(mAnswers);
+        final String[] answers = new String[cursor.getCount()];
+
+        for (int index = 0; index < answers.length; ++index)
+        {
+            cursor.moveToNext();
+            answers[index] = cursor.getString(0);
+        }
 
         cursor.close();
-        db.close();
+
+        //--------------------------------------------------------//
+
+        query = "SELECT QuestionText FROM Questions WHERE QuizIndex = " + quizIndex;
+        cursor = db.rawQuery(query, null);
+
+        final int questionCount = cursor.getCount();
+
+        mFragments = new Fragment[questionCount + 1];
+
+        for (int index = 0; index < questionCount; ++index)
+        {
+            cursor.moveToNext();
+            mFragments[index] = QuizQuestionFragment.newInstance(cursor.getString(0), answers);
+        }
+
+        mFragments[questionCount] = new QuizSubmitFragment();
+
+        cursor.close();
     }
+
+    //============================================================================//
+
+    public int[] getChoices()
+    {
+        final int questionCount = mFragments.length - 1;
+
+        int[] result = new int[questionCount];
+
+        for (int index = 0; index < questionCount; ++index)
+        {
+            QuizQuestionFragment fragment = (QuizQuestionFragment) mFragments[index];
+            result[index] = fragment.getChoice();
+        }
+
+        return result;
+    }
+
+    //============================================================================//
 
     @Override
     public Fragment getItem(int position)
     {
-        String query = String.format("SELECT QuestionText FROM Questions WHERE QuizIndex = %d AND QuestionIndex = %d", mQuizIndex, position);
-        SQLiteDatabase db = mDatabaseHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        // todo: error handling
-        cursor.moveToNext();
-        return QuestionFragment.newInstance(position, cursor.getString(0), mAnswers);
+        return mFragments[position];
     }
 
     @Override
     public int getCount()
     {
-        // todo: store mCount in ctor
-        return 5;
+        return mFragments.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position)
     {
-        return "Question No. " + (position + 1);
+        if (++position == mFragments.length) return "End of Quiz";
+        return "Question No. " + position;
     }
-
-    private int mQuizIndex;
-    private String[] mAnswers;
 }

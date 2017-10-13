@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <string name="app_name">YamsMLB</string>
+
+    <string name="app_name">MyLifeBalance</string>
+    <string name="choose_quiz_title">MyLifeBalance - Choose Quiz</string>
+    <string name="submit">Submit</string>
+
 </resources>

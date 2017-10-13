@@ -12,44 +12,22 @@
     tools:context="net.yams.mlbquiz.ChooseQuizActivity">
 
     <Toolbar
-        android:id="@+id/main_toolbar"
+        android:id="@+id/choose_quiz_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        android:title="MyLifeBalance App" />
+        android:title="@string/choose_quiz_title" />
 
-    <Button
-        android:id="@+id/main_button_quiz_a"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="doStartQuizA" />
-
-    <Button
-        android:id="@+id/main_button_quiz_b"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="doStartQuizB" />
-
-    <Button
-        android:id="@+id/main_button_quiz_c"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="doStartQuizC" />
-
-    <Button
-        android:id="@+id/main_button_quiz_d"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="doStartQuizD" />
+    <ListView
+        android:id="@+id/choose_quiz_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusableInTouchMode="true"
+        android:listSelector="#DDDD22"
+        android:longClickable="true"
+        />
 
 </LinearLayout>
